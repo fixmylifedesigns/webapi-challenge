@@ -63,11 +63,9 @@ router.delete("/projects/:id", (req, res) => {
   project
     .remove(req.params.id)
     .then(del => {
-      if (del === 0) {
-        return error(404, " no project by that id");
-      } else {
-        res.json({ success: `deleting project : ${id}` });
-      }
+    
+        res.json({ success: `deleting project ` }).end;
+      
     })
     .catch(err => {
       return error(500, "could not delete", res);
@@ -98,11 +96,11 @@ router.post("/projects/actions", (req, res) => {
     });
 });
 
-router.put("/actions", (req, res) => {
+router.put("/projects/actions/:id", (req, res) => {
     const id = req.params.id
     const change = req.body
       action
-        .update(id, change)
+        .update(req.params.id, req.body)
         .then(response => {
             if (response === 0) {
               return error(404, "no project by that id", res);

@@ -9,31 +9,31 @@ const error = (status, message, res) => {
   res.status(status).json({ error: message });
 };
 //******* Project *********//
-router.get("/project", (req, res) => {
-  const { id } = req.params;
+router.get("/projects/", (req, res) => {
+//   const { id } = req.params;
   project
-    .get(id)
-    .then(res => {
-      res.json(res);
+    .get()
+    .then(response => {
+      res.json(response);
     })
     .catch(err => {
       return error(500, "error", res);
     });
 });
 
-router.get("/project/:id", (req, res) => {
+router.get("/projects/:id", (req, res) => {
   project
-    .getProjectActions(req.params)
-    .then(res => {
-      res.json(res);
+    .getProjectActions(req.params.id)
+    .then(response => {
+      res.json(response);
     })
     .catch(err => {
       return error(500, "no project by that id", res);
     });
 });
-router.post("project/", (req, res) => {
+router.post("/projects/", (req, res) => {
   project
-    .instert(req.body)
+    .insert(req.body)
     .then(add => {
       res.json(add);
     })
@@ -42,26 +42,26 @@ router.post("project/", (req, res) => {
     });
 });
 
-router.put("/project/:id", (req, res) => {
+router.put("/projects/:id", (req, res) => {
+const id = req.params.id
+const change = req.body
   project
-    .update(req.params, req.body)
-    .then(res => {
-      if (res === 0) {
-        return error(404, "no project by that id");
+    .update(id, change)
+    .then(response => {
+      if (response === 0) {
+        return error(404, "no project by that id", res);
       } else {
-        db.find(id).then(project => {
-          res.json(project);
-        });
+        res.status(202).json(response)
       }
     })
     .catch(err => {
-      return error(500, "error making changes", res);
+      return error(500, "error making changes to project", res);
     });
 });
 
-router.delete("/project/:id", (req, res) => {
+router.delete("/projects/:id", (req, res) => {
   project
-    .remove(req.params)
+    .remove(req.params.id)
     .then(del => {
       if (del === 0) {
         return error(404, " no project by that id");
@@ -75,21 +75,21 @@ router.delete("/project/:id", (req, res) => {
 });
 
 //*********action *********//
-router.get("/project", (req, res) => {
-  const { id } = req.params;
-  project
-    .get(id)
-    .then(res => {
-      res.json(res);
+router.get("/projects/:id/", (req, res) => {
+//   const { id } = req.params;
+  action
+    .get()
+    .then(response => {
+      res.json(response);
     })
     .catch(err => {
       return error(500, "error", res);
     });
 });
 
-router.post("project/", (req, res) => {
-  project
-    .instert(req.body)
+router.post("/projects/actions", (req, res) => {
+    action
+    .insert(req.body)
     .then(add => {
       res.json(add);
     })
@@ -98,33 +98,33 @@ router.post("project/", (req, res) => {
     });
 });
 
-router.put("/project/:id", (req, res) => {
-  project
-    .update(req.params, req.body)
-    .then(res => {
-      if (res === 0) {
-        return error(404, "no project by that id");
-      } else {
-        db.find(id).then(project => {
-          res.json(project);
-        });
-      }
-    })
+router.put("/actions", (req, res) => {
+    const id = req.params.id
+    const change = req.body
+      action
+        .update(id, change)
+        .then(response => {
+            if (response === 0) {
+              return error(404, "no project by that id", res);
+            } else {
+              res.status(202).json(response)
+            }
+          })
     .catch(err => {
-      return error(500, "error making changes", res);
+      return error(500, "error making changes to actions", res);
     });
 });
 
-router.delete("/project/:id", (req, res) => {
-  project
-    .remove(req.params)
+router.delete("/projects/action/:id", (req, res) => {
+    action
+    .remove(req.params.id)
     .then(del => {
       if (del === 0) {
         return error(404, " no project by that id");
       } else {
-        res.json({ success: `deleting project : ${id}` });
+        res.json({ success: `deleting action` }).del();
       }
-    })
+    }) 
     .catch(err => {
       return error(500, "could not delete", res);
     });
